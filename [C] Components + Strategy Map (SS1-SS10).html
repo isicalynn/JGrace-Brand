@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Components &amp; Strategic Systems · J Grace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Raleway:wght@400;500;600&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  :root{
+    --midnight:#0b0a33; --amber:#f7d081; --mist:#f2f5fa; --cream:#fff4df;
+    --lavender:#e3ddfa; --slate:#6e7191; --white:#ffffff; --line:#e6e6ee;
+    --display:"Poppins","Thicccboi","Century Gothic",sans-serif;
+    --ui:"Raleway",-apple-system,BlinkMacSystemFont,sans-serif;
+    --body:"Roboto",-apple-system,BlinkMacSystemFont,sans-serif;
+    --L1:#C9A227; --L2:#B5651D; --L3:#6B8E6B; --L4:#4C7A8C; --L5:#7A6B9C;
+    --L6:#A85751; --L7:#4F7942; --L8:#C77DA1; --L9:#8A8D4A; --L10:#3E6B8A;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);font-weight:300;background:var(--mist);color:var(--midnight);line-height:1.7;font-size:15px;padding:40px 22px 70px}
+  .page{max-width:1180px;margin:0 auto;position:relative}
+  h1,h2,h3,.display{font-family:var(--display);font-weight:600;letter-spacing:-0.01em;line-height:1.18}
+  .logo{font-family:"Brush Script MT","Segoe Script",cursive;font-size:30px;color:#fff}
+
+  .tri{position:absolute;width:0;height:0;z-index:0}
+  .t1{top:-8px;left:-6px;border-top:58px solid var(--midnight);border-right:58px solid transparent}
+  .t2{top:-8px;left:48px;border-top:36px solid var(--amber);border-right:36px solid transparent}
+  .t3{bottom:-12px;right:-6px;border-bottom:60px solid var(--lavender);border-left:60px solid transparent}
+
+  .hero{background:var(--midnight);color:#fff;border-radius:16px;padding:36px 40px;margin-bottom:18px;position:relative;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;gap:22px}
+  .hero .eyebrow{font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber);margin-bottom:12px}
+  .hero h1{font-size:30px;line-height:1.16;margin-bottom:12px;max-width:760px}
+  .hero p{color:#c8c8dd;font-size:14.5px;max-width:780px}
+  @media(max-width:800px){.hero{flex-direction:column}.hero h1{font-size:24px}}
+
+  /* tabs */
+  .tabs{display:flex;gap:8px;margin-bottom:24px;position:relative;z-index:1}
+  .tab{font-family:var(--ui);font-weight:600;font-size:13px;letter-spacing:.03em;color:var(--slate);background:var(--white);border:1px solid var(--line);border-radius:10px;padding:11px 20px;cursor:pointer;transition:all .15s}
+  .tab:hover{color:var(--midnight)}
+  .tab.active{background:var(--midnight);color:#fff;border-color:var(--midnight)}
+  .panel{display:none}
+  .panel.active{display:block}
+
+  .section-label{font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--slate);margin:40px 0 4px}
+  .section-label:first-child{margin-top:0}
+  .section-title{font-size:23px;margin-bottom:6px}
+  .section-sub{color:var(--slate);font-size:14px;margin-bottom:20px;max-width:840px}
+
+  .legend{display:flex;flex-wrap:wrap;gap:9px 18px;margin:14px 0 26px;padding:15px 18px;background:var(--white);border:1px solid var(--line);border-radius:12px;box-shadow:0 20px 45px -26px #acacac}
+  .legend .li{display:flex;align-items:center;gap:8px;font-family:var(--ui);font-size:12px;color:#3a3a52}
+  .legend .sw{width:12px;height:12px;border-radius:3px;flex:none}
+
+  .layer{margin-bottom:16px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--white);box-shadow:0 20px 45px -26px #acacac}
+  .layer-head{display:flex;align-items:baseline;gap:12px;padding:14px 18px;border-left:6px solid var(--lc)}
+  .layer-head .num{font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:var(--lc)}
+  .layer-head h3{font-size:17px}
+  .layer-head .desc{font-family:var(--body);font-size:12.5px;color:var(--slate);margin-left:auto;max-width:540px;text-align:right}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;padding:6px 18px 18px}
+  .chip{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--line);border-radius:999px;padding:5px 13px 5px 5px;font-family:var(--ui);font-size:12.5px}
+  .chip .badge{flex:none;width:23px;height:23px;border-radius:999px;background:var(--cc);color:#fff;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center}
+  .chip .nm{color:var(--midnight);white-space:nowrap}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+  .scard{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:22px 24px;display:flex;flex-direction:column;box-shadow:0 20px 45px -24px #acacac}
+  .scard .q{font-family:var(--ui);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--slate);display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .scard .q::before{content:"";width:16px;height:3px;border-radius:2px;background:var(--amber)}
+  .scard .sh{display:flex;align-items:baseline;gap:11px;margin-bottom:12px}
+  .scard .ss{font-family:var(--display);font-size:13px;font-weight:600;color:#fff;background:var(--midnight);border-radius:8px;padding:4px 10px;flex:none}
+  .scard h3{font-size:20px;line-height:1.14}
+  .scard .prod{font-size:13.5px;color:#3a3a52;margin-bottom:16px;padding-bottom:15px;border-bottom:1px solid var(--line)}
+  .scard .prod b{font-family:var(--ui);font-weight:600;color:var(--midnight)}
+  .tier{margin-bottom:13px}
+  .tier:last-child{margin-bottom:0}
+  .tier .tl{display:flex;align-items:center;gap:8px;font-family:var(--ui);font-size:10.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;color:var(--midnight)}
+  .tier .tl .dot{width:10px;height:10px;border-radius:3px}
+  .tl.base .dot{background:var(--midnight)}
+  .tl.supp .dot{background:var(--amber)}
+  .tl.supp{color:var(--slate)}
+  .tl.scale .dot{background:var(--slate)}
+  .tl.scale{color:var(--slate)}
+  .tchips{display:flex;flex-wrap:wrap;gap:7px}
+  .tchip{display:inline-flex;align-items:center;gap:7px;background:var(--white);border:1px solid var(--line);border-radius:999px;padding:3px 11px 3px 3px;font-family:var(--ui);font-size:11.5px;color:var(--midnight)}
+  .tchip .b{flex:none;width:20px;height:20px;border-radius:999px;background:var(--cc);color:#fff;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center}
+  .tchip.ext{padding:4px 12px;background:var(--mist);border-style:dashed;color:var(--slate);font-style:italic}
+
+  /* all-50 list */
+  .phasegroup{margin-bottom:20px;background:var(--white);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 45px -26px #acacac;overflow:hidden}
+  .phasegroup .ph{display:flex;align-items:center;gap:11px;padding:13px 18px;border-left:6px solid var(--pc)}
+  .phasegroup .ph .pn{font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--pc)}
+  .phasegroup .ph h3{font-size:16px}
+  .phasegroup .ph .rng{margin-left:auto;font-family:var(--ui);font-size:11.5px;color:var(--slate)}
+  .slist{list-style:none;padding:4px 18px 16px}
+  .slist li{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid #f0f0f5;align-items:baseline}
+  .slist li:last-child{border-bottom:0}
+  .slist .id{font-family:var(--display);font-weight:600;font-size:12px;color:var(--midnight);background:var(--mist);border-radius:6px;padding:2px 8px;flex:none;min-width:44px;text-align:center}
+  .slist .id.hot{background:var(--amber)}
+  .slist .nm{font-family:var(--ui);font-weight:600;font-size:14px;color:var(--midnight);flex:none;min-width:230px}
+  .slist .q{font-size:13px;color:var(--slate)}
+  @media(max-width:720px){.slist li{flex-wrap:wrap}.slist .nm{min-width:0}}
+  .callout{background:var(--midnight);color:#fff;border-radius:14px;padding:22px 26px;margin:6px 0 24px}
+  .callout .eyebrow{font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+  .callout p{color:#d3d3e4;font-size:14px;max-width:820px}
+  .callout b{color:#fff;font-family:var(--ui);font-weight:600}
+
+  /* network */
+  .netwrap{background:var(--white);border:1px solid var(--line);border-radius:16px;box-shadow:0 20px 45px -24px #acacac;overflow:hidden}
+  .netbar{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .modeswitch{display:flex;gap:6px;background:var(--mist);border-radius:10px;padding:4px}
+  .modeswitch button{font-family:var(--ui);font-weight:600;font-size:12.5px;color:var(--slate);background:transparent;border:0;border-radius:7px;padding:8px 14px;cursor:pointer}
+  .modeswitch button.on{background:var(--midnight);color:#fff}
+  .tierfilter{display:flex;gap:12px;align-items:center;font-family:var(--ui);font-size:12px;color:var(--slate)}
+  .tierfilter label{display:flex;gap:6px;align-items:center;cursor:pointer}
+  .hint{font-family:var(--ui);font-size:12px;color:var(--slate);margin-left:auto}
+  #netlegend{display:flex;flex-wrap:wrap;gap:8px 14px;padding:12px 20px;border-bottom:1px solid var(--line)}
+  #netlegend .li{display:flex;align-items:center;gap:7px;font-family:var(--ui);font-size:11.5px;color:#3a3a52}
+  #netlegend .sw{width:11px;height:11px;border-radius:3px;flex:none}
+  #graph{width:100%;height:660px;display:block;background:radial-gradient(circle at 50% 40%, #ffffff, #f2f5fa)}
+  #graph text{font-family:var(--ui);pointer-events:none}
+  .nofallback{padding:40px;text-align:center;color:var(--slate);font-family:var(--ui)}
+  .tipbox{position:fixed;pointer-events:none;background:var(--midnight);color:#fff;font-family:var(--ui);font-size:12px;padding:8px 11px;border-radius:8px;max-width:260px;opacity:0;transition:opacity .1s;z-index:50;line-height:1.4}
+  .tipbox b{color:var(--amber)}
+
+  .foot{font-family:var(--ui);margin-top:42px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--slate)}
+  .foot .logo{font-size:18px;color:var(--midnight);vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="page">
+  <span class="tri t1"></span><span class="tri t2"></span><span class="tri t3"></span>
+
+  <div class="hero">
+    <div>
+      <div class="eyebrow">J Grace · Brand Foundation Sprint</div>
+      <h1>Brand Components &amp; the Strategic Systems They Build</h1>
+      <p>The 59 brand components are the ingredients. Each strategic system is a recipe that draws on them, and later systems are built from earlier ones. This is the first 10 of 50 systems in detail, plus a map of how it all connects.</p>
+    </div>
+    <div class="logo">J.Grace</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="overview">Overview</button>
+    <button class="tab" data-tab="network">Network Map</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="panel active" id="overview">
+    <div class="section-label">Reference</div>
+    <h2 class="section-title">The 59 Brand Components</h2>
+    <p class="section-sub">Organized by layer, in the order components are typically built. Each layer informs the next.</p>
+    <div class="legend" id="legend"></div>
+    <div id="layers"></div>
+
+    <div class="section-label">The Build Sequence</div>
+    <h2 class="section-title">Strategic Systems SS1–SS10</h2>
+    <p class="section-sub">The first ten systems a company builds, from identity and position through audience, offer, and market entry. Each card shows what it produces and the components it draws on, colored by layer.</p>
+    <div class="grid" id="strategies"></div>
+
+    <div class="section-label" style="margin-top:44px">The Full System</div>
+    <h2 class="section-title">All 50 Strategic Systems</h2>
+    <p class="section-sub">The ten above are the foundation. A complete marketing operation is built from 50 systems, in the sequence a company grows. The first ten are highlighted in amber.</p>
+    <div class="callout">
+      <div class="eyebrow">Why this matters</div>
+      <p>Most companies build these <b>out of order</b>, a paid-acquisition engine on an undefined audience, a content machine with no narrative. Finding where you actually sit in this sequence is the fastest way to explain why marketing spend underperforms, and the highest-leverage place to start.</p>
+    </div>
+    <div id="all50"></div>
+  </div>
+
+  <!-- NETWORK -->
+  <div class="panel" id="network">
+    <div class="section-label">Interactive</div>
+    <h2 class="section-title">Network Map</h2>
+    <p class="section-sub">How everything connects. Drag any node to explore. Hover a node to isolate its links. Switch modes to see the components feeding the first ten systems, or the dependency web of all fifty.</p>
+    <div class="netwrap">
+      <div class="netbar">
+        <div class="modeswitch" id="modeswitch">
+          <button data-mode="A" class="on">First 10 · with components</button>
+          <button data-mode="B">All 50 · dependencies</button>
+        </div>
+        <div class="tierfilter" id="tierfilter">
+          <span>Component links:</span>
+          <label><input type="checkbox" data-tier="base" checked> Base</label>
+          <label><input type="checkbox" data-tier="supp" checked> Supporting</label>
+          <label><input type="checkbox" data-tier="scale" checked> Scale</label>
+        </div>
+        <span class="hint">Amber arrows = a strategy built from an earlier strategy.</span>
+      </div>
+      <div id="netlegend"></div>
+      <svg id="graph"></svg>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span class="logo">J.Grace</span> · Companion visual to <b>00-brand-component-master-list.md</b> and <b>00b-strategic-systems-library.md</b>. Base / Supporting / Scale tiers per the Strategic Systems Library. Interactive map requires an internet connection.
+  </div>
+</div>
+
+<div class="tipbox" id="tip"></div>
+
+<script>
+/* ---------- DATA ---------- */
+const LAYERS = [
+  {n:1,name:"Foundation",cvar:"--L1",hex:"#C9A227",desc:"Why the company exists, what it believes, and where it's going.",comp:[[1,"Mission Statement"],[2,"Vision Statement"],[3,"Core Values"],[4,"Brand Purpose"],[5,"Founding Story"],[6,"Brand Beliefs"]]},
+  {n:2,name:"Positioning",cvar:"--L2",hex:"#B5651D",desc:"Where the company stands in the market.",comp:[[7,"Category Definition"],[8,"Brand Positioning Statement"],[9,"Unique Value Proposition"],[10,"Points of Difference"],[11,"Points of Parity"],[12,"Competitive Landscape Summary"],[13,"Opposing Force"],[14,"Narrative Territory"]]},
+  {n:3,name:"Audience",cvar:"--L3",hex:"#6B8E6B",desc:"Who the brand serves, in specific human terms.",comp:[[15,"Ideal Customer Profile"],[16,"Customer Pain Points"],[17,"Motivations & Desires"],[18,"Buying Triggers"],[19,"Objections & Barriers"],[20,"Jobs to Be Done"],[21,"Customer Journey Map"],[22,"Transformation Statement"]]},
+  {n:4,name:"Messaging",cvar:"--L4",hex:"#4C7A8C",desc:"What the brand says, across channels and contexts.",comp:[[23,"Core Messaging Framework"],[24,"Tagline"],[25,"Elevator Pitch"],[26,"Value Proposition"],[27,"Audience Message Variants"],[28,"Proof Points"],[29,"Headline Bank"],[30,"Boilerplate"]]},
+  {n:5,name:"Voice & Tone",cvar:"--L5",hex:"#7A6B9C",desc:"How the brand communicates, consistent and recognizable.",comp:[[31,"Brand Voice Definition"],[32,"Tone Guide"],[33,"Vocabulary Guide"],[34,"Writing Style Guide"],[35,"Brand Personality Statement"],[36,"Voice Examples Library"]]},
+  {n:6,name:"Story",cvar:"--L6",hex:"#A85751",desc:"The narrative layer, how humans remember brands.",comp:[[37,"Narrative Framework"],[38,"Brand Story"],[39,"Founder Story"],[40,"Customer Success Stories"]]},
+  {n:7,name:"Proof & Credibility",cvar:"--L7",hex:"#4F7942",desc:"The evidence that turns interest into trust.",comp:[[41,"Case Studies"],[42,"Testimonials & Quotes"],[43,"Awards & Credentials"],[44,"Data & Statistics"],[45,"Client Logos & Social Proof"],[46,"Trust Signal Library"]]},
+  {n:8,name:"Visual Identity",cvar:"--L8",hex:"#C77DA1",desc:"How the brand is recognized before a word is read.",comp:[[47,"Logo System"],[48,"Color Palette"],[49,"Typography System"],[50,"Imagery & Photography Direction"],[51,"Iconography System"],[52,"Brand Mark or Symbol"]]},
+  {n:9,name:"Naming & Architecture",cvar:"--L9",hex:"#8A8D4A",desc:"How the brand names itself, its products, and services.",comp:[[53,"Company Name"],[54,"Product & Service Names"],[55,"Naming Architecture"],[56,"Naming Conventions & Rules"]]},
+  {n:10,name:"Promise & Experience",cvar:"--L10",hex:"#3E6B8A",desc:"How the brand commits to showing up, and the standards that make it real.",comp:[[57,"Brand Promise"],[58,"Customer Experience Principles"],[59,"Brand Guidelines & Standards"]]}
+];
+const CMAP = {};
+LAYERS.forEach(L=>L.comp.forEach(c=>CMAP[c[0]]={name:c[1],cvar:L.cvar,hex:L.hex}));
+
+const STRATS = [
+  {id:"SS1",name:"Brand Strategy",q:"Who are we as a company?",prod:"The governing account of the company's identity: why it exists, what it believes, and what it stands for and against.",base:[1,2,3,6,4],supp:[5,57],scale:[59]},
+  {id:"SS2",name:"Positioning Strategy",q:"Why choose us over competitors?",prod:"A defensible account of the space the brand occupies in the customer's mind: the reason to choose it, and the table stakes it must meet.",base:[8,9,10,11,7],supp:[13,12],scale:[28]},
+  {id:"SS3",name:"Category Strategy",q:"What market do we compete in?",prod:"The deliberate choice of competitive frame: which category the brand plays in or creates, and the alternatives it is measured against.",base:[7,12,14],supp:[13,6],scale:[37]},
+  {id:"SS4",name:"Audience Strategy",q:"Who are we trying to serve?",prod:"A complete, evidence-based definition of each customer type: who they are, what's broken, what they want, what makes them ready, and what stops them.",base:[15,16,17,20],supp:[18,19],scale:[27]},
+  {id:"SS5",name:"Customer Insight Strategy",q:"What's true about our customers?",prod:"The living understanding of customer reality, how they move, decide, and change, kept current through research rather than assumption.",base:[21,22,18],supp:[16,19,17],scale:[40],ext:{base:["Primary customer research"],supp:[],scale:[]}},
+  {id:"SS6",name:"Product Strategy Alignment",q:"What should we build or improve?",prod:"The bridge between brand and product: a filter for which offerings to build, kill, or sharpen based on who the brand serves and what it promises.",base:[4,8,15,20],supp:[16,17,9],scale:[22,57]},
+  {id:"SS7",name:"Go-to-Market Strategy",q:"How do we introduce our offering?",prod:"The coordinated plan for bringing an offering to market: audience, message, motion, sequence, and the metrics that define a successful entry.",base:[8,15,23,21],supp:[26,18,9,28],scale:[27,40]},
+  {id:"SS8",name:"Offer Strategy",q:"What exactly should we sell, to whom?",prod:"The definition of the discrete things a customer can buy: the shape of each offer, the outcome it promises, and the transformation it delivers.",base:[9,15,16,22],supp:[17,20,26],scale:[27,28]},
+  {id:"SS9",name:"Pricing Strategy",q:"What should it cost?",prod:"The rationale and structure of price: model, tiers, anchors, and the defensible link between what is charged and the value delivered.",base:[8,26,11,12],supp:[17,19],scale:[28,22],ext:{base:["Willingness-to-pay research"],supp:[],scale:[]}},
+  {id:"SS10",name:"Packaging Strategy",q:"How should it be bundled?",prod:"The structure of how offers combine into buyable units: tiers, bundles, add-ons, and the good/better/best architecture that guides the buyer.",base:[15,26],supp:[17,20,27],scale:[55,22],ext:{base:["Product / service portfolio"],supp:[],scale:[]}}
+];
+
+const PHASES = [
+  {p:1,name:"Identity & Position",hex:"#2E2C55",range:"SS1–SS3"},
+  {p:2,name:"Audience & Insight",hex:"#6B8E6B",range:"SS4–SS5"},
+  {p:3,name:"Offer & Market Entry",hex:"#B5651D",range:"SS6–SS11"},
+  {p:4,name:"Growth & Intelligence",hex:"#4C7A8C",range:"SS12–SS17"},
+  {p:5,name:"Message & Content",hex:"#7A6B9C",range:"SS18–SS23"},
+  {p:6,name:"Demand & Leads",hex:"#C0873B",range:"SS24–SS29"},
+  {p:7,name:"Owned Channels",hex:"#4F7942",range:"SS30–SS34"},
+  {p:8,name:"Customer Lifecycle",hex:"#A85751",range:"SS35–SS39"},
+  {p:9,name:"Sales & Partnerships",hex:"#3E6B8A",range:"SS40–SS42"},
+  {p:10,name:"Reputation & Experience",hex:"#C77DA1",range:"SS43–SS45"},
+  {p:11,name:"Operations & System",hex:"#8A8D4A",range:"SS46–SS50"}
+];
+const phaseOf = n => n<=3?1:n<=5?2:n<=11?3:n<=17?4:n<=23?5:n<=29?6:n<=34?7:n<=39?8:n<=42?9:n<=45?10:11;
+const phaseHex = n => PHASES[phaseOf(n)-1].hex;
+
+const S50 = [
+  [1,"Brand Strategy","Who are we as a company?"],[2,"Positioning Strategy","Why choose us over competitors?"],[3,"Category Strategy","What market do we compete in?"],
+  [4,"Audience Strategy","Who are we trying to serve?"],[5,"Customer Insight Strategy","What's true about our customers?"],
+  [6,"Product Strategy Alignment","What should we build or improve?"],[7,"Go-to-Market Strategy","How do we introduce our offering?"],[8,"Offer Strategy","What exactly should we sell, to whom?"],[9,"Pricing Strategy","What should it cost?"],[10,"Packaging Strategy","How should it be bundled?"],[11,"Launch Strategy","How do we launch successfully?"],
+  [12,"Growth Strategy","Where will growth come from?"],[13,"Competitive Intelligence","What are competitors doing?"],[14,"Market Intelligence","What's changing in our market?"],[15,"Voice of Customer","What are customers telling us?"],[16,"Trend Intelligence","What trends should shape strategy?"],[17,"Opportunity Identification","Where are the biggest openings?"],
+  [18,"Messaging Strategy","What should we consistently say?"],[19,"Narrative Strategy","What larger story do we own?"],[20,"Thought Leadership Strategy","What ideas should we own?"],[21,"Editorial Strategy","What conversations do we lead?"],[22,"Content Strategy","What content should we make?"],[23,"Content Distribution Strategy","Where does content go?"],
+  [24,"Demand Generation Strategy","How do we generate demand?"],[25,"Lead Generation Strategy","How do we attract qualified prospects?"],[26,"Lead Capture System","How do we turn visitors into leads?"],[27,"Lead Qualification System","Which prospects will convert?"],[28,"Lead Nurture Strategy","How do we build trust until ready?"],[29,"Marketing Automation Strategy","What should be automated?"],
+  [30,"Website Strategy","What should our site accomplish?"],[31,"Website Information Architecture","How is information organized?"],[32,"Conversion Optimization Strategy","How do we lift conversions?"],[33,"SEO Strategy","How are we discovered organically?"],[34,"Paid Acquisition Strategy","Where do we invest paid media?"],
+  [35,"Customer Journey Strategy","What end-to-end experience?"],[36,"Customer Onboarding Strategy","How do we deliver first value?"],[37,"Customer Success Strategy","How do customers reach outcomes?"],[38,"Customer Retention Strategy","Why do customers stay?"],[39,"Customer Advocacy Strategy","How do customers become promoters?"],
+  [40,"Sales Enablement Strategy","How do we help sales close?"],[41,"Account-Based Marketing","How do we win strategic accounts?"],[42,"Partner & Channel Strategy","Which partners accelerate growth?"],
+  [43,"Reputation Management Strategy","How do we build and protect trust?"],[44,"Community Strategy","How do we create belonging?"],[45,"Brand Experience Strategy","How should every interaction feel?"],
+  [46,"Marketing Operations Strategy","How should marketing run efficiently?"],[47,"Marketing Technology Strategy","What stack supports our strategy?"],[48,"Measurement Strategy","How do we measure success?"],[49,"Marketing Planning System","What do we prioritize this year?"],[50,"Marketing Operating System","How does it all run as one system?"]
+];
+
+// strategy -> earlier strategies it builds on
+const DEPS = {1:[],2:[1],3:[1],4:[2],5:[4],6:[1,2,4],7:[2,4,18],8:[4,6],9:[2,4,8],10:[8,9],
+11:[1,2,3,4,5,6,7,8],12:[2,4,7,13,14,15,16,17],13:[2,3],14:[3],15:[4,5],16:[3,14],17:[13,14,15,16],
+18:[1,2,4],19:[1,2],20:[1,19],21:[19,20],22:[4,21],23:[22,4],
+24:[2,4,18,22,23],25:[4,24],26:[8,24,25],27:[4,25],28:[18,5],29:[28,22],
+30:[2,4,18],31:[30],32:[30,5],33:[4,22,3],34:[2,4,8,18],
+35:[4,1],36:[35,1],37:[35,36],38:[35,37],39:[37,38],
+40:[18,13],41:[4,40,2],42:[1,2],43:[1,19],44:[1,19],45:[1,5],
+46:[24,35,22],47:[46,48],48:[7,35],49:[12,48,46],50:[3,5,11,17,23,29,34,39,42,45,49]};
+
+/* ---------- OVERVIEW RENDER ---------- */
+document.getElementById('legend').innerHTML = LAYERS.map(L=>
+  `<span class="li"><span class="sw" style="background:${L.hex}"></span>L${L.n} · ${L.name}</span>`).join('');
+
+document.getElementById('layers').innerHTML = LAYERS.map(L=>`
+  <div class="layer" style="--lc:${L.hex}">
+    <div class="layer-head"><span class="num">Layer ${L.n}</span><h3>${L.name}</h3><span class="desc">${L.desc}</span></div>
+    <div class="chips">${L.comp.map(c=>`<span class="chip" style="--cc:${L.hex}"><span class="badge">${c[0]}</span><span class="nm">${c[1]}</span></span>`).join('')}</div>
+  </div>`).join('');
+
+function tchips(nums, exts){
+  let out=(nums||[]).map(n=>{const c=CMAP[n];return c?`<span class="tchip" style="--cc:${c.hex}"><span class="b">${n}</span>${c.name}</span>`:'';}).join('');
+  out+=(exts||[]).map(e=>`<span class="tchip ext">${e}</span>`).join('');
+  return out||'<span class="tchip ext">None</span>';
+}
+document.getElementById('strategies').innerHTML = STRATS.map(s=>{
+  const ext=s.ext||{base:[],supp:[],scale:[]};
+  return `<div class="scard"><div class="q">${s.q}</div>
+    <div class="sh"><span class="ss">${s.id}</span><h3>${s.name}</h3></div>
+    <div class="prod"><b>Produces:</b> ${s.prod}</div>
+    <div class="tier"><div class="tl base"><span class="dot"></span>Base</div><div class="tchips">${tchips(s.base,ext.base)}</div></div>
+    <div class="tier"><div class="tl supp"><span class="dot"></span>Supporting</div><div class="tchips">${tchips(s.supp,ext.supp)}</div></div>
+    <div class="tier"><div class="tl scale"><span class="dot"></span>Scale</div><div class="tchips">${tchips(s.scale,ext.scale)}</div></div>
+  </div>`;
+}).join('');
+
+document.getElementById('all50').innerHTML = PHASES.map(ph=>{
+  const items=S50.filter(s=>phaseOf(s[0])===ph.p);
+  return `<div class="phasegroup" style="--pc:${ph.hex}">
+    <div class="ph"><span class="pn">Phase ${ph.p}</span><h3>${ph.name}</h3><span class="rng">${ph.range}</span></div>
+    <ul class="slist">${items.map(s=>`<li><span class="id ${s[0]<=10?'hot':''}">SS${s[0]}</span><span class="nm">${s[1]}</span><span class="q">${s[2]}</span></li>`).join('')}</ul>
+  </div>`;
+}).join('');
+
+/* ---------- TABS ---------- */
+let graphBuilt=false;
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById(t.dataset.tab).classList.add('active');
+  if(t.dataset.tab==='network' && !graphBuilt){ graphBuilt=true; setTimeout(initGraph,60); }
+}));
+
+/* ---------- NETWORK GRAPH ---------- */
+let MODE='A', tierOn={base:true,supp:true,scale:true}, sim=null;
+const tip=document.getElementById('tip');
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity=1;tip.style.left=(x+14)+'px';tip.style.top=(y+14)+'px';}
+function hideTip(){tip.style.opacity=0;}
+
+function buildData(){
+  const nodes=[], links=[];
+  if(MODE==='A'){
+    const compSet=new Set();
+    STRATS.forEach(s=>[...s.base,...s.supp,...s.scale].forEach(c=>compSet.add(c)));
+    compSet.forEach(c=>nodes.push({id:'c'+c,type:'comp',num:c,label:''+c,name:CMAP[c].name,hex:CMAP[c].hex,r:9}));
+    STRATS.forEach(s=>nodes.push({id:s.id,type:'strat',label:s.id,name:s.name,q:s.q,hex:'#0b0a33',r:17}));
+    STRATS.forEach(s=>{
+      s.base.forEach(c=>links.push({source:'c'+c,target:s.id,kind:'comp',tier:'base',hex:CMAP[c].hex}));
+      s.supp.forEach(c=>links.push({source:'c'+c,target:s.id,kind:'comp',tier:'supp',hex:CMAP[c].hex}));
+      s.scale.forEach(c=>links.push({source:'c'+c,target:s.id,kind:'comp',tier:'scale',hex:CMAP[c].hex}));
+      const n=+s.id.slice(2);
+      (DEPS[n]||[]).filter(d=>d<=10).forEach(d=>links.push({source:'SS'+d,target:s.id,kind:'strat'}));
+    });
+  } else {
+    S50.forEach(s=>nodes.push({id:'SS'+s[0],type:'strat',label:''+s[0],name:s[1],q:s[2],hex:phaseHex(s[0]),r:12,phase:phaseOf(s[0])}));
+    for(let n=1;n<=50;n++) (DEPS[n]||[]).forEach(d=>links.push({source:'SS'+d,target:'SS'+n,kind:'strat'}));
+  }
+  return {nodes,links};
+}
+
+function initGraph(){
+  const svgEl=document.getElementById('graph');
+  if(!window.d3){ svgEl.outerHTML='<div class="nofallback">The interactive map needs an internet connection to load. Reopen online to explore it.</div>'; return; }
+  renderGraph();
+  // legend
+  const lg=document.getElementById('netlegend');
+  function paint(){
+    if(MODE==='A'){
+      lg.innerHTML='<span class="li"><span class="sw" style="background:#0b0a33"></span>Strategic system</span>'+
+        LAYERS.map(L=>`<span class="li"><span class="sw" style="background:${L.hex}"></span>L${L.n} component</span>`).join('');
+    } else {
+      lg.innerHTML=PHASES.map(p=>`<span class="li"><span class="sw" style="background:${p.hex}"></span>${p.range} · ${p.name}</span>`).join('');
+    }
+    document.getElementById('tierfilter').style.display = MODE==='A' ? 'flex' : 'none';
+  }
+  paint();
+  document.querySelectorAll('#modeswitch button').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('#modeswitch button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); MODE=b.dataset.mode; paint(); renderGraph();
+  }));
+  document.querySelectorAll('#tierfilter input').forEach(cb=>cb.addEventListener('change',()=>{
+    tierOn[cb.dataset.tier]=cb.checked;
+    d3.selectAll('line.comp').style('display',d=> (d.kind==='comp'&&!tierOn[d.tier])?'none':null);
+  }));
+}
+
+function renderGraph(){
+  const svg=d3.select('#graph'); svg.selectAll('*').remove();
+  const W=document.getElementById('graph').clientWidth||1000, H=660;
+  const {nodes,links}=buildData();
+
+  const defs=svg.append('defs');
+  defs.append('marker').attr('id','arrow').attr('viewBox','0 -5 10 10').attr('refX',22).attr('refY',0)
+    .attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto')
+    .append('path').attr('d','M0,-5L10,0L0,5').attr('fill','#e0a93f');
+
+  if(sim) sim.stop();
+  sim=d3.forceSimulation(nodes)
+    .force('link',d3.forceLink(links).id(d=>d.id).distance(l=>l.kind==='strat'?(MODE==='A'?120:95):70).strength(l=>l.kind==='strat'?0.5:0.28))
+    .force('charge',d3.forceManyBody().strength(MODE==='A'?-260:-180))
+    .force('center',d3.forceCenter(W/2,H/2))
+    .force('collide',d3.forceCollide().radius(d=>d.r+8))
+    .force('x',d3.forceX(W/2).strength(0.04)).force('y',d3.forceY(H/2).strength(0.06));
+
+  const link=svg.append('g').selectAll('line').data(links).join('line')
+    .attr('class',d=>d.kind==='comp'?'comp':'strat')
+    .attr('stroke',d=>d.kind==='strat'?'#e0a93f':d.hex)
+    .attr('stroke-width',d=>d.kind==='strat'?2:1)
+    .attr('stroke-opacity',d=>d.kind==='strat'?0.55:0.22)
+    .attr('marker-end',d=>d.kind==='strat'?'url(#arrow)':null)
+    .style('display',d=>(d.kind==='comp'&&!tierOn[d.tier])?'none':null);
+
+  const node=svg.append('g').selectAll('g').data(nodes).join('g').style('cursor','pointer')
+    .call(d3.drag()
+      .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y;})
+      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;})
+      .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}));
+
+  node.append('circle').attr('r',d=>d.r).attr('fill',d=>d.hex)
+    .attr('stroke','#fff').attr('stroke-width',d=>d.type==='strat'?2:1.2);
+  node.append('text').text(d=>d.label).attr('text-anchor','middle').attr('dy','0.34em')
+    .attr('fill','#fff').attr('font-size',d=>d.type==='strat'?(MODE==='A'?12:10):9)
+    .attr('font-weight',600);
+
+  // neighbor highlight
+  const nbr={}; links.forEach(l=>{const s=l.source.id||l.source,t=l.target.id||l.target;(nbr[s]=nbr[s]||new Set()).add(t);(nbr[t]=nbr[t]||new Set()).add(s);});
+  node.on('mouseover',(e,d)=>{
+    const keep=nbr[d.id]||new Set(); keep.add(d.id);
+    node.style('opacity',n=>keep.has(n.id)?1:0.12);
+    link.style('opacity',l=>{const s=l.source.id||l.source,t=l.target.id||l.target;return (s===d.id||t===d.id)?(l.kind==='strat'?0.85:0.6):0.04;});
+    const extra=d.type==='strat'?`<br><span style="color:#c8c8dd">${d.q||''}</span>`:'';
+    showTip(`<b>${d.type==='strat'?d.id+' · '+d.name:'#'+d.num+' '+d.name}</b>${extra}`,e.pageX,e.pageY);
+  }).on('mousemove',e=>{tip.style.left=(e.pageX+14)+'px';tip.style.top=(e.pageY+14)+'px';})
+    .on('mouseout',()=>{node.style('opacity',1);link.style('opacity',l=>l.kind==='strat'?0.55:0.22);hideTip();});
+
+  sim.on('tick',()=>{
+    link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    node.attr('transform',d=>`translate(${d.x},${d.y})`);
+  });
+}
+</script>
+</body>
+</html>
